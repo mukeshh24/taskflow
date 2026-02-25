@@ -91,7 +91,7 @@ async function userLogin(req, res) {
 
     res.status(200).json({
       success: true,
-      message: "Login  Successful!",
+      message: "Login Successful!",
       token,
       data: {
         id: user._id,
