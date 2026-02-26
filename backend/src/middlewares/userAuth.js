@@ -5,7 +5,7 @@ const userAuth = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    res.status(401).json({ success: false, message: "Missing Token!" });
+    return res.status(401).json({ success: false, message: "Missing Token!" });
   }
 
   const token = authHeader.split(" ")[1];
@@ -22,6 +22,8 @@ const userAuth = async (req, res, next) => {
     }
 
     req.user = user;
+
+    next();
   } catch (error) {
     console.error(error);
     res
