@@ -183,8 +183,7 @@ export const userDelete = async (req, res, next) => {
       return next(errorHandler(404, "User not found"));
     }
 
-    // Future:
-    // await Task.deleteMany({ authorId :userId });
+    await Task.deleteMany({ authorId: userId });
 
     await User.findByIdAndDelete(userId);
 
