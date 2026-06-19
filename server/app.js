@@ -4,6 +4,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDb from "./config/db.js";
+import userRouter from "./routes/user.route.js";
 
 const app = express();
 
@@ -15,7 +16,7 @@ connectDb();
 // middlewares
 app.use(
   cors({
-    origin: ["http://localhost:5173/"],
+    origin: [process.env.CLIENT_URL],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   }),
@@ -28,7 +29,19 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.json({ status: 200, success: true, message: "Backend setup done!" });
 });
+app.use("/api/user", userRouter);
+
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal server error";
+
+  res.status(statusCode).json({
+    success: false,
+    statusCode: statusCode,
+    message: message,
+  });
+});
 
 app.listen(PORT, () => {
-  console.log(`Server running in PORT : ${PORT}`);
+  console.log(`Server running on ${PORT}`);
 });
