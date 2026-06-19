@@ -11,11 +11,11 @@ import protect from "../middlewares/protect.js";
 
 const userRouter = express.Router();
 
-// public API's
+// Public Routes
 userRouter.post("/register", userRegister);
 userRouter.post("/login", userLogin);
 
-// private API's
+// Private Routes
 userRouter.get("/profile", protect, getUser);
 userRouter.put("/profile", protect, userUpdate);
 userRouter.get("/logout", protect, userLogout);

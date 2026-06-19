@@ -6,7 +6,7 @@ const protect = async (req, res, next) => {
     const token = req.cookies.access_token;
 
     if (!token) {
-      return next(errorHandler(403, "Un-authorized"));
+      return next(errorHandler(403, "Unauthorized"));
     }
 
     const decoded  = verifyToken(token);

@@ -5,6 +5,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDb from "./config/db.js";
 import userRouter from "./routes/user.route.js";
+import taskRouter from "./routes/task.router.js";
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.get("/", (req, res) => {
   res.json({ status: 200, success: true, message: "Backend setup done!" });
 });
 app.use("/api/user", userRouter);
+app.use("/api/tasks", taskRouter);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
