@@ -39,6 +39,29 @@ import { CalendarDays } from "lucide-react";
 import { CircleCheck } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useSelector } from "react-redux";
+import { toast } from "sonner";
+import { errorHandler } from "@/lib/errorHandlre";
+import {
+  addTask,
+  editTask,
+  getAllTask,
+  taskDelete,
+} from "@/services/taskServices";
+import { useNavigate } from "react-router-dom";
+import { LoaderCircle } from "lucide-react";
+import { useEffect } from "react";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Clock3 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 const taskStatistics = [
   {
@@ -81,16 +104,6 @@ const Dashboard = () => {
 
   const taskFormId = useId();
 
-  async function onSubmit(data) {
-    console.log("data", data);
-
-    // API call
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    toast.success("Account Created");
-    form.reset();
-  }
-
   const auth = useSelector((state) => state.auth);
 
   const firstName = auth?.user?.name?.split(" ")[0];
@@ -109,6 +122,123 @@ const Dashboard = () => {
     greeting = "Good Night";
   }
 
+  const [open, setOpen] = useState(false);
+  const [tasks, setTasks] = useState([]);
+  const [editingTask, setEditingTask] = useState(null);
+
+  async function onSubmit(data) {
+    try {
+      const payload = {
+        title: data.title,
+        description: data.description,
+        priority: data.priority,
+        dueDate: data.dueDate,
+        completed: data.status === "Completed",
+      };
+
+      let response;
+
+      if (editingTask) {
+        response = await editTask(editingTask._id, payload);
+      } else {
+        response = await addTask(payload);
+      }
+
+      if (response.success) {
+        toast.success(response.message);
+
+        form.reset();
+        setEditingTask(null);
+        setOpen(false);
+
+        await fetchTask();
+      }
+    } catch (error) {
+      const message = error?.response?.data?.message || "Something went wrong";
+
+      toast.error(message);
+      console.log(errorHandler(error));
+    }
+  }
+
+  const fetchTask = async () => {
+    try {
+      const response = await getAllTask();
+      if (response.success) {
+        setTasks(response?.task);
+      }
+    } catch (error) {
+      const message = error?.response?.data?.message || "Something went wrong";
+      toast.error(message);
+      console.log(errorHandler(error));
+    }
+  };
+  useEffect(() => {
+    fetchTask();
+  }, []);
+
+  const priorityStyle = {
+    Low: "bg-green-100 text-green-700 border-green-200",
+    Medium: "bg-orange-100 text-orange-700 border-orange-200",
+    High: "bg-red-100 text-red-700 border-red-200",
+  };
+
+  const priorityDot = {
+    Low: "bg-green-500",
+    Medium: "bg-orange-500",
+    High: "bg-red-500",
+  };
+
+  const formatDate = (date) =>
+    new Date(date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+
+  const handleAddTask = () => {
+    setEditingTask(null);
+
+    form.reset({
+      title: "",
+      description: "",
+      priority: "Low",
+      dueDate: "",
+      status: "In Progress",
+    });
+
+    setOpen(true);
+  };
+
+  const handleEditTask = (task) => {
+    setEditingTask(task);
+
+    form.reset({
+      title: task.title,
+      description: task.description,
+      priority: task.priority,
+      dueDate: task.dueDate.split("T")[0],
+      status: task.completed ? "Completed" : "In Progress",
+    });
+
+    setOpen(true);
+  };
+
+  const handleDeleteTask = async (taskId) => {
+    try {
+      const response = await taskDelete(taskId);
+
+      if (response.success) {
+        toast.success(response.message);
+        await fetchTask();
+      }
+    } catch (error) {
+      const message = error?.response?.data?.message || "Something went wrong";
+      toast.error(message);
+      console.log(errorHandler(error));
+    }
+  };
+
   return (
     <section className="w-full">
       <AppBradcrumb currentPage="" />
@@ -121,23 +251,45 @@ const Dashboard = () => {
             Stay organized and keep your tasks on track.
           </span>
         </div>
-        <Dialog>
+        <Dialog
+          open={open}
+          onOpenChange={(value) => {
+            setOpen(value);
+
+            if (!value) {
+              setEditingTask(null);
+
+              form.reset({
+                title: "",
+                description: "",
+                priority: "Low",
+                dueDate: "",
+                status: "In Progress",
+              });
+            }
+          }}
+        >
           <DialogTrigger>
             <Button
               type="button"
+              onClick={handleAddTask}
               className="w-fit py-5.5 cursor-pointer bg-black/80 hover:bg-black flex items-center gap-2"
             >
               <Plus className="w-5 h-5" />
               <span>Add New Task</span>
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent
+            onOpenAutoFocus={(e) => {
+              e.preventDefault();
+            }}
+          >
             <DialogHeader>
               <DialogTitle>
                 <div className="flex items-center justify-center gap-2">
                   <CirclePlus className="w-5 h-5 text-black" />
                   <span className="text-lg font-semibold text-black">
-                    Create New Task
+                    {editingTask ? "Update Task" : "Create New Task"}
                   </span>
                 </div>
               </DialogTitle>
@@ -328,10 +480,19 @@ const Dashboard = () => {
                     className="w-full py-5.5 cursor-pointer bg-black/80 hover:bg-black"
                   >
                     {form.formState.isSubmitting ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <LoaderCircle className="h-4 w-4 animate-spin" />
-                        Creating Task...
-                      </span>
+                      editingTask ? (
+                        <span className="flex items-center justify-center gap-2">
+                          <LoaderCircle className="h-4 w-4 animate-spin" />
+                          Updating Task...
+                        </span>
+                      ) : (
+                        <span className="flex items-center justify-center gap-2">
+                          <LoaderCircle className="h-4 w-4 animate-spin" />
+                          Creating Task...
+                        </span>
+                      )
+                    ) : editingTask ? (
+                      "Update Task"
                     ) : (
                       "Create Task"
                     )}
@@ -360,6 +521,63 @@ const Dashboard = () => {
             </div>
           );
         })}
+      </div>
+      <div className="mt-6 space-y-4">
+        {tasks.map((task) => (
+          <Card
+            key={task._id}
+            className="bg-black/4 transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+          >
+            <CardHeader className="flex flex-row justify-between items-start">
+              <div className="flex gap-3">
+                <div
+                  className={`mt-2 h-3 w-3 rounded-full ${priorityDot[task.priority]}`}
+                />
+                <div>
+                  <CardTitle className="text-lg">{task.title}</CardTitle>
+                  <CardDescription className="mt-2 line-clamp-2">
+                    {task.description}
+                  </CardDescription>
+                </div>
+              </div>
+              <Badge
+                className={`rounded-full border ${priorityStyle[task.priority]}`}
+              >
+                {task.priority}
+              </Badge>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2">
+              <div className="flex flex-wrap gap-6 text-sm text-muted-foreground pl-6">
+                <div className="flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4" />
+                  Due {formatDate(task.dueDate)}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock3 className="h-4 w-4" />
+                  Created {formatDate(task.createdAt)}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 self-end">
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="cursor-pointer"
+                  onClick={() => handleEditTask(task)}
+                >
+                  <FilePenLine className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="destructive"
+                  className="cursor-pointer"
+                  onClick={() => handleDeleteTask(task?._id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </section>
   );

@@ -47,7 +47,7 @@ const taskStatistics = [
 
 const TaskStatistics = () => {
   return (
-    <aside className="w-full lg:max-w-sm">
+    <aside className="w-full lg:max-w-sm lg:sticky lg:top-23">
       <Card className="w-full bg-zinc-50 mb-5">
         <CardHeader className="flex items-center gap-2 mb-2">
           <TrendingUp className="w-5 h-5 text-black" />
