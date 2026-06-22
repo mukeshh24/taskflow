@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import errorHandler from "../utils/errorHandler.js";
 import generateToken from "../utils/generateToken.js";
+import Task from "../models/task.model.js";
 
 export const userRegister = async (req, res, next) => {
   try {

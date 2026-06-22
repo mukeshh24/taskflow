@@ -7,19 +7,27 @@ import CompletedTask from "./pages/CompletedTask";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import PublicRoute from "./routes/PublicRoute";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<WebLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="/pending" element={<PendingTask />} />
-          <Route path="/complete" element={<CompletedTask />} />
-          <Route path="/profile" element={<Profile />} />
+        <Route element={<PublicRoute />}>
+          <Route path="/" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
         </Route>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+
+        <Route element={<ProtectedRoute />}>
+          <Route element={<WebLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/pending" element={<PendingTask />} />
+            <Route path="/complete" element={<CompletedTask />} />
+            <Route path="/profile" element={<Profile />} />
+          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );

@@ -19,9 +19,11 @@ import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Sparkles } from "lucide-react";
 import { Lightbulb } from "lucide-react";
 import { Settings } from "lucide-react";
+import { useSelector } from "react-redux";
 
 export function AppSidebar() {
   const { setOpenMobile } = useSidebar();
+  const auth = useSelector((state) => state.auth);
 
   return (
     <Sidebar>
@@ -36,12 +38,12 @@ export function AppSidebar() {
           <div className="flex items-center gap-2">
             <Avatar className="w-10 h-10">
               <AvatarFallback className="text-black font-semibold text-sm">
-                AG
+                {auth?.user?.name[0]}
               </AvatarFallback>
             </Avatar>
             <div className="flex items-start flex-col">
               <p className="text-black font-semibold text-sm">
-                Hey, Aman Gupta
+                Hey, {auth?.user?.name}
               </p>
               <p className="text-black/50 text-sm flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-black" />
@@ -56,7 +58,7 @@ export function AppSidebar() {
             <SidebarMenuItem className="mb-2">
               <SidebarMenuButton asChild className="">
                 <NavLink
-                  to="/"
+                  to="/dashboard"
                   onClick={() => setOpenMobile(false)}
                   className="flex items-center gap-2 py-6"
                 >
