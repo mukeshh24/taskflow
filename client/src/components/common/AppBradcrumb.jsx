@@ -18,7 +18,7 @@ const AppBradcrumb = ({ currentPage }) => {
           <>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/components">{currentPage}</BreadcrumbLink>
+              <BreadcrumbLink href={`/${currentPage.toLowerCase()}`}>{currentPage}</BreadcrumbLink>
             </BreadcrumbItem>
           </>
         )}

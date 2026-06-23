@@ -6,13 +6,16 @@ import { Toaster } from "./components/ui/sonner";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from "./store/store";
+import { TaskProvider } from "./context/TaskContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
       <PersistGate persistor={persistor} loading={<div>Loading....</div>}>
-        <App />
-        <Toaster position="top-center" />
+        <TaskProvider>
+          <App />
+          <Toaster position="top-center" />
+        </TaskProvider>
       </PersistGate>
     </Provider>
   </StrictMode>,

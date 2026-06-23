@@ -12,7 +12,6 @@ const WebLayout = () => {
       <AppSidebar />
       <main className="w-full bg-white text-zinc-800">
         <section className="relative w-full min-h-screen pt-22 pb-5 px-5 flex flex-col lg:flex-row items-start justify-between gap-5">
-          {/* <SidebarTrigger /> */}
           <div className="flex-1 w-full">
             <Outlet />
           </div>

@@ -119,7 +119,17 @@ const Profile = () => {
   return (
     <section className="w-full">
       <AppBradcrumb currentPage="Profile" />
-      <div className="flex flex-col xl:flex-row items-start gap-5">
+      <div className="flex flex-col gap-5">
+        <div className="flex items-start flex-col gap-0">
+          <p className="text-black font-semibold text-lg capitalize">
+            Profile
+          </p>
+          <span className="text-black/50 text-sm">
+            Manage your personal information and account settings.
+          </span>
+        </div>
+      </div>
+      <div className="flex flex-col xl:flex-row items-start gap-5 mt-5">
         <Card className="w-full xl:max-w-md bg-zinc-50">
           <CardHeader className="flex flex-col items-center">
             <CardTitle className="flex items-center justify-center gap-2">

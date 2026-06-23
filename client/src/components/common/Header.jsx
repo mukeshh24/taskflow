@@ -4,6 +4,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useSelector } from "react-redux";
+import { SidebarTrigger } from "../ui/sidebar";
 
 const Header = () => {
   const auth = useSelector((state) => state.auth);
@@ -14,7 +15,8 @@ const Header = () => {
         <ClipboardList className="w-6 h-6 text-black" />
         <span className="text-2xl font-bold text-black">TaskFlow</span>
       </Link>
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-3 sm:gap-5">
+        <SidebarTrigger className="md:hidden bg-black/4 p-4" />
         <Link
           to="/profile"
           className="cursor-pointer text-black/70 hover:text-black transition-all duration-300"
@@ -23,16 +25,18 @@ const Header = () => {
         </Link>
         <div className="flex items-center gap-2">
           <Avatar className="w-10 h-10 relative">
-            <AvatarFallback className="text-black font-semibold text-lg">
+            <AvatarFallback className="text-black font-semibold text-lg capitalize">
               {auth?.user?.name[0]}
             </AvatarFallback>
             <div className="h-3 w-3 bg-green-400 rounded-full absolute -bottom-1 right-1"></div>
           </Avatar>
           <div className="hidden md:flex items-start flex-col">
-            <p className="text-black font-semibold text-sm">
+            <p className="text-black font-semibold text-sm capitalize">
               {auth?.user?.name}
             </p>
-            <span className="text-black/50 text-sm">{auth?.user?.email}</span>
+            <span className="text-black/50 text-sm lowercase">
+              {auth?.user?.email}
+            </span>
           </div>
         </div>
       </div>

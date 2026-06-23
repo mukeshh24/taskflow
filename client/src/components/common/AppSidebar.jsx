@@ -37,12 +37,12 @@ export function AppSidebar() {
         <SidebarGroup className="py-5">
           <div className="flex items-center gap-2">
             <Avatar className="w-10 h-10">
-              <AvatarFallback className="text-black font-semibold text-sm">
+              <AvatarFallback className="text-black font-semibold text-sm capitalize">
                 {auth?.user?.name[0]}
               </AvatarFallback>
             </Avatar>
             <div className="flex items-start flex-col">
-              <p className="text-black font-semibold text-sm">
+              <p className="text-black font-semibold text-sm capitalize">
                 Hey, {auth?.user?.name}
               </p>
               <p className="text-black/50 text-sm flex items-center gap-2">
@@ -132,35 +132,6 @@ export function AppSidebar() {
           </div>
         </SidebarGroup>
       </SidebarContent>
-      {/* <SidebarContent className="pt-50">
-        <SidebarGroup className="px-3">
-          <div className="bg-black/4 p-5 flex flex-col gap-1">
-            <div className="flex items-center gap-3">
-              <div className="w-16 h-10 flex items-center justify-center bg-zinc-200 rounded">
-                <Lightbulb className="h-5 w-5 text-black" />
-              </div>
-              <div className="flex items-start flex-col">
-                <p className="text-black font-semibold text-sm">Pro Tip</p>
-                <p className="text-black/50 text-[12px]">
-                  Use keyboard shortcuts to boost productivity!
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <p className="text-black font-normal text-sm">
-                Visit{" "}
-                <Link
-                  to="/"
-                  className="text-black font-semibold text-sm hover:underline underline-offset-2 transition-all duration-300"
-                >
-                  Mukesh Suthar
-                </Link>
-              </p>
-            </div>
-          </div>
-        </SidebarGroup>
-      </SidebarContent> */}
-      <SidebarFooter />
     </Sidebar>
   );
 }

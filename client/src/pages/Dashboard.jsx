@@ -62,33 +62,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Clock3 } from "lucide-react";
 import { Trash2 } from "lucide-react";
-
-const taskStatistics = [
-  {
-    id: 1,
-    title: "Low Priority",
-    value: 0,
-    icon: CircleCheckBig,
-    color: "text-green-600",
-    bgColor: "bg-green-100",
-  },
-  {
-    id: 2,
-    title: "Medium Priority",
-    value: 0,
-    icon: ListTodo,
-    color: "text-orange-600",
-    bgColor: "bg-orange-100",
-  },
-  {
-    id: 3,
-    title: "High Priority",
-    value: "0%",
-    icon: ChartNoAxesCombined,
-    color: "text-violet-600",
-    bgColor: "bg-violet-100",
-  },
-];
+import { useContext } from "react";
+import { TaskContext } from "@/context/TaskContext";
+import TaskCard from "@/components/common/TaskCard";
+import TaskOverview from "@/components/common/TaskOverview";
 
 const Dashboard = () => {
   const form = useForm({
@@ -123,8 +100,8 @@ const Dashboard = () => {
   }
 
   const [open, setOpen] = useState(false);
-  const [tasks, setTasks] = useState([]);
   const [editingTask, setEditingTask] = useState(null);
+  const { tasks, fetchTask } = useContext(TaskContext);
 
   async function onSubmit(data) {
     try {
@@ -160,22 +137,6 @@ const Dashboard = () => {
       console.log(errorHandler(error));
     }
   }
-
-  const fetchTask = async () => {
-    try {
-      const response = await getAllTask();
-      if (response.success) {
-        setTasks(response?.task);
-      }
-    } catch (error) {
-      const message = error?.response?.data?.message || "Something went wrong";
-      toast.error(message);
-      console.log(errorHandler(error));
-    }
-  };
-  useEffect(() => {
-    fetchTask();
-  }, []);
 
   const priorityStyle = {
     Low: "bg-green-100 text-green-700 border-green-200",
@@ -239,12 +200,39 @@ const Dashboard = () => {
     }
   };
 
+  const lowPriorityTask = tasks.filter((task) => task.priority === "Low");
+  const mediumPriorityTask = tasks.filter((task) => task.priority === "Medium");
+  const highPriorityTask = tasks.filter((task) => task.priority === "High");
+  const taskStatistics = [
+    {
+      id: 1,
+      title: "Low Priority",
+      value: lowPriorityTask.length,
+      icon: CircleCheckBig,
+      color: "text-green-500",
+    },
+    {
+      id: 2,
+      title: "Medium Priority",
+      value: mediumPriorityTask.length,
+      icon: ListTodo,
+      color: "text-orange-500",
+    },
+    {
+      id: 3,
+      title: "High Priority",
+      value: highPriorityTask.length,
+      icon: ChartNoAxesCombined,
+      color: "text-red-500",
+    },
+  ];
+
   return (
     <section className="w-full">
       <AppBradcrumb currentPage="" />
       <div className="mb-5 flex flex-col md:flex-row lg:flex-col xl:flex-row justify-between gap-5">
         <div className="flex items-start flex-col gap-0">
-          <p className="text-black font-semibold text-lg">
+          <p className="text-black font-semibold text-lg capitalize">
             {greeting}, {firstName} <span className="wave">🖐🏼</span>
           </p>
           <span className="text-black/50 text-sm">
@@ -269,7 +257,7 @@ const Dashboard = () => {
             }
           }}
         >
-          <DialogTrigger>
+          <DialogTrigger className="w-fit">
             <Button
               type="button"
               onClick={handleAddTask}
@@ -503,80 +491,21 @@ const Dashboard = () => {
           </DialogContent>
         </Dialog>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         {taskStatistics.map((task) => {
           const Icon = task.icon;
-          return (
-            <div
-              key={task.id}
-              className="flex items-center gap-2 bg-black/4 p-5 rounded group"
-            >
-              <div className="w-10 h-10 flex items-center justify-center bg-zinc-200 rounded">
-                <Icon className="h-5 w-5 text-black group-hover:scale-120 transition-all duration-300" />
-              </div>
-              <div className="flex items-start flex-col gap-0">
-                <p className="text-black font-semibold text-sm">{task.value}</p>
-                <span className="text-black/50 text-sm">{task.title}</span>
-              </div>
-            </div>
-          );
+          return <TaskOverview key={task.id} task={task} Icon={Icon} />;
         })}
       </div>
       <div className="mt-6 space-y-4">
         {tasks.map((task) => (
-          <Card
+          <TaskCard
             key={task._id}
-            className="bg-black/4 transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-          >
-            <CardHeader className="flex flex-row justify-between items-start">
-              <div className="flex gap-3">
-                <div
-                  className={`mt-2 h-3 w-3 rounded-full ${priorityDot[task.priority]}`}
-                />
-                <div>
-                  <CardTitle className="text-lg">{task.title}</CardTitle>
-                  <CardDescription className="mt-2 line-clamp-2">
-                    {task.description}
-                  </CardDescription>
-                </div>
-              </div>
-              <Badge
-                className={`rounded-full border ${priorityStyle[task.priority]}`}
-              >
-                {task.priority}
-              </Badge>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-2">
-              <div className="flex flex-wrap gap-6 text-sm text-muted-foreground pl-6">
-                <div className="flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4" />
-                  Due {formatDate(task.dueDate)}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock3 className="h-4 w-4" />
-                  Created {formatDate(task.createdAt)}
-                </div>
-              </div>
-              <div className="flex items-center gap-2 self-end">
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="cursor-pointer"
-                  onClick={() => handleEditTask(task)}
-                >
-                  <FilePenLine className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="destructive"
-                  className="cursor-pointer"
-                  onClick={() => handleDeleteTask(task?._id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+            task={task}
+            onEdit={handleEditTask}
+            onDelete={handleDeleteTask}
+            updateTask={true}
+          />
         ))}
       </div>
     </section>
