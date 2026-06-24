@@ -2,11 +2,14 @@ import { getAllTask } from "@/services/taskServices";
 import { useEffect } from "react";
 import { useState } from "react";
 import { createContext } from "react";
+import { useSelector } from "react-redux";
 
 export const TaskContext = createContext();
 
 export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
+
+  const auth = useSelector((state) => state.auth);
 
   const fetchTask = async () => {
     try {
@@ -20,9 +23,14 @@ export const TaskProvider = ({ children }) => {
       console.log(errorHandler(error));
     }
   };
+  
   useEffect(() => {
-    fetchTask();
-  }, []);
+    if (auth.isLoggedIn) {
+      fetchTask();
+    } else {
+      setTasks([]);
+    }
+  }, [auth.isLoggedIn]);
 
   return (
     <TaskContext.Provider value={{ tasks, setTasks, fetchTask }}>
