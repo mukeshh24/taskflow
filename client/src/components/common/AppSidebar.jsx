@@ -1,7 +1,6 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarHeader,
@@ -122,7 +121,8 @@ export function AppSidebar() {
               <p className="text-black font-normal text-sm">
                 Visit{" "}
                 <Link
-                  to="/"
+                  to="https://mukeshsuthar.vercel.app/"
+                  target="_blank"
                   className="text-black font-semibold text-sm hover:underline underline-offset-2 transition-all duration-300"
                 >
                   Mukesh Suthar

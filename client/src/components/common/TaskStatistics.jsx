@@ -9,8 +9,6 @@ import {
 } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { Clock } from "lucide-react";
-import { useState } from "react";
-import { useEffect } from "react";
 import { useContext } from "react";
 import { TaskContext } from "@/context/TaskContext";
 import TaskOverview from "./TaskOverview";

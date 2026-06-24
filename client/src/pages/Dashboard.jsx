@@ -11,12 +11,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { User } from "lucide-react";
 import { useState } from "react";
 import { useId } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import signupSchema from "@/schema/signupSchema";
 import {
   Field,
   FieldError,
@@ -30,42 +28,19 @@ import { FilePenLine } from "lucide-react";
 import { CirclePlus } from "lucide-react";
 import { ListSortDescending } from "lucide-react";
 import { Flag } from "lucide-react";
-import {
-  NativeSelect,
-  NativeSelectOptGroup,
-  NativeSelectOption,
-} from "@/components/ui/native-select";
 import { CalendarDays } from "lucide-react";
-import { CircleCheck } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { errorHandler } from "@/lib/errorHandlre";
-import {
-  addTask,
-  editTask,
-  getAllTask,
-  taskDelete,
-} from "@/services/taskServices";
-import { useNavigate } from "react-router-dom";
+import { addTask, editTask, taskDelete } from "@/services/taskServices";
 import { LoaderCircle } from "lucide-react";
-import { useEffect } from "react";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Clock3 } from "lucide-react";
-import { Trash2 } from "lucide-react";
 import { useContext } from "react";
 import { TaskContext } from "@/context/TaskContext";
 import TaskCard from "@/components/common/TaskCard";
 import TaskOverview from "@/components/common/TaskOverview";
+import EmptyTask from "@/components/common/EmptyTask";
+import { ClipboardList } from "lucide-react";
 
 const Dashboard = () => {
   const form = useForm({
@@ -137,25 +112,6 @@ const Dashboard = () => {
       console.log(errorHandler(error));
     }
   }
-
-  const priorityStyle = {
-    Low: "bg-green-100 text-green-700 border-green-200",
-    Medium: "bg-orange-100 text-orange-700 border-orange-200",
-    High: "bg-red-100 text-red-700 border-red-200",
-  };
-
-  const priorityDot = {
-    Low: "bg-green-500",
-    Medium: "bg-orange-500",
-    High: "bg-red-500",
-  };
-
-  const formatDate = (date) =>
-    new Date(date).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
 
   const handleAddTask = () => {
     setEditingTask(null);
@@ -498,15 +454,25 @@ const Dashboard = () => {
         })}
       </div>
       <div className="mt-6 space-y-4">
-        {tasks.map((task) => (
-          <TaskCard
-            key={task._id}
-            task={task}
-            onEdit={handleEditTask}
-            onDelete={handleDeleteTask}
-            updateTask={true}
+        {tasks.length > 0 ? (
+          <>
+            {tasks.map((task) => (
+              <TaskCard
+                key={task._id}
+                task={task}
+                onEdit={handleEditTask}
+                onDelete={handleDeleteTask}
+                updateTask={true}
+              />
+            ))}
+          </>
+        ) : (
+          <EmptyTask
+            Icon={ClipboardList}
+            title="No Tasks Yet"
+            description="You haven't created any tasks yet. Click 'Add New Task' to create your first task."
           />
-        ))}
+        )}
       </div>
     </section>
   );

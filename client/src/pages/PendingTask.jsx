@@ -1,11 +1,15 @@
 import AppBradcrumb from "@/components/common/AppBradcrumb";
+import EmptyTask from "@/components/common/EmptyTask";
 import TaskCard from "@/components/common/TaskCard";
 import { TaskContext } from "@/context/TaskContext";
+import { ListTodo } from "lucide-react";
 import React from "react";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 const PendingTask = () => {
   const { tasks } = useContext(TaskContext);
+  const navigate = useNavigate();
 
   const pendingTasks = tasks.filter((task) => !task.completed);
 
@@ -23,9 +27,21 @@ const PendingTask = () => {
         </div>
       </div>
       <div className="mt-5 space-y-4">
-        {pendingTasks.map((task) => (
-          <TaskCard key={task._id} task={task} />
-        ))}
+        {pendingTasks.length > 0 ? (
+          <>
+            {pendingTasks.map((task) => (
+              <TaskCard key={task._id} task={task} />
+            ))}
+          </>
+        ) : (
+          <EmptyTask
+            Icon={ListTodo}
+            title="No Pending Tasks"
+            description="You're all caught up! There are no pending tasks."
+            buttonText="Go to Dashboard"
+            onClick={() => navigate("/dashboard")}
+          />
+        )}
       </div>
     </section>
   );

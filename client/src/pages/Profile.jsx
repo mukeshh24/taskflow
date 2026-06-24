@@ -121,9 +121,7 @@ const Profile = () => {
       <AppBradcrumb currentPage="Profile" />
       <div className="flex flex-col gap-5">
         <div className="flex items-start flex-col gap-0">
-          <p className="text-black font-semibold text-lg capitalize">
-            Profile
-          </p>
+          <p className="text-black font-semibold text-lg capitalize">Profile</p>
           <span className="text-black/50 text-sm">
             Manage your personal information and account settings.
           </span>

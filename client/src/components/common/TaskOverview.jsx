@@ -1,6 +1,6 @@
 import React from "react";
 
-const TaskOverview = ({task,Icon}) => {
+const TaskOverview = ({ task, Icon }) => {
   return (
     <div
       key={task.id}

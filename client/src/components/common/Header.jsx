@@ -2,7 +2,7 @@ import { ClipboardList } from "lucide-react";
 import { Settings } from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 import { useSelector } from "react-redux";
 import { SidebarTrigger } from "../ui/sidebar";
 
